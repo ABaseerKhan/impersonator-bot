@@ -1,19 +1,20 @@
 import csv
 import json
+import os
 
 # The Mac from which the data was extracted from may set the handle id to "" and so we need to explicitly replace that
-my_handle_id = "+12408832496"
+my_handle_id = "+13013662250"
 # The handle id for which the bot is trained to impersonate
-bot_handle_id = "+12408832496"
+bot_handle_id = "+13013662250"
 
-csv_file_path = '../data/raw/output.csv'
-jsonl_file_path = '../data/processed/training_data.jsonl'
+csv_file_path = './data/raw/output.csv'
+jsonl_file_path = './data/processed/training_data.jsonl'
 
 messages = {}
 threads = {}
 
 with open(csv_file_path, mode='r', encoding='utf-8') as file:
-    csv_reader = csv.DictReader(file)
+    csv_reader = csv.DictReader(file, delimiter=',')
 
     for row in csv_reader:
         guid = row["guid"]
@@ -34,6 +35,10 @@ with open(csv_file_path, mode='r', encoding='utf-8') as file:
         else:
             threads[thread_originator_guid].append(guid)
 
+# Define your directories
+directory = './data/processed'
+if not os.path.exists(directory):
+    os.makedirs(directory)
 with open(jsonl_file_path, mode='w', encoding='utf-8') as jsonl_file:
     for thread_originator_guid in threads:
         if thread_originator_guid not in messages:
